@@ -72,6 +72,14 @@ jobs:
           set -euo pipefail
           ABIS="arm64-v8a armeabi-v7a" REFRESH="fbneo mame2010 mame2003_plus mame2003 mame2000 fbalpha2012 desmume melonds" bash scripts/fetch_cores.sh
 
+      # Core mGBA Link Cable (2 GBA virtual). OPSIONAL dan terpisah: bila gagal, APK tetap dibuild tanpa core ini
+      # (menu "Link Cable" hanya menampilkan pesan core belum disertakan). Core lain tidak terpengaruh.
+      - name: Bangun core mGBA Link (opsional)
+        id: mgbalink
+        continue-on-error: true
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: bash scripts/build_mgba_link_core.sh
+
       - name: Laporan core yang ikut di APK
         working-directory: ${{ env.PROJECT_DIR }}
         run: |
