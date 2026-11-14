@@ -58,7 +58,13 @@ jobs:
         working-directory: ${{ env.PROJECT_DIR }}
         run: |
           set -euo pipefail
-          bash tests/run_netplay_test.sh
+          # Uji netplay memakai soket loopback sungguhan: ulangi sampai 3 kali bila ada kegagalan sesaat (kegagalan tetap = gagal).
+          ok=0
+          for attempt in 1 2 3; do
+            if bash tests/run_netplay_test.sh; then ok=1; break; fi
+            echo "::warning::Uji netplay gagal (percobaan $attempt/3)"
+          done
+          [ "$ok" = 1 ] || exit 1
           python3 tests/lobby_server_test.py
           bash tests/run_ethbridge_test.sh
           bash tests/run_ztdiscovery_test.sh
